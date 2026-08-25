@@ -22,6 +22,23 @@ import urllib.error
 import urllib.request
 
 
+def read_text(path):
+    """Read a text file, tolerating common non-UTF-8 encodings (e.g. GBK/GB18030).
+
+    Tries UTF-8 (with/without BOM) first, then the common CJK codecs, and
+    finally falls back to latin-1 (lossless) / replacement so a read never
+    raises UnicodeDecodeError.
+    """
+    with open(path, "rb") as f:
+        data = f.read()
+    for enc in ("utf-8-sig", "utf-8", "gb18030", "big5", "latin-1"):
+        try:
+            return data.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    return data.decode("utf-8", errors="replace")
+
+
 def http_post(url, payload, headers):
     """POST JSON and return (status_code, response_body)."""
     data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
@@ -95,14 +112,13 @@ def main():
     args = parser.parse_args()
 
     instance = args.instance.rstrip("/")
-    yaml_path = resolve_yaml(args.path)
+    yaml_path = resolve_yaml(os.path.expanduser(args.path))
     if not os.path.isfile(yaml_path):
         print(f"Error: lyricsfile not found: {yaml_path}", file=sys.stderr)
         print("       (run lrc2lyricsfile.py first to generate it)", file=sys.stderr)
         sys.exit(1)
 
-    with open(yaml_path, "r", encoding="utf-8") as f:
-        text = f.read()
+    text = read_text(yaml_path)
 
     meta = parse_metadata(text)
     track_name = clean(meta.get("title", ""))

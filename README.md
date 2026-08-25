@@ -1,10 +1,9 @@
-# LRCGET Lyrics Tooling
+# LRCLIB Lyricsfile Tools
 
 A small, dependency-light toolkit for working with **Lyricsfile 1.0** documents and
 the **LRCLIB** lyrics database. It converts ESLyric-style `.lrc` files (including
 word-level `<mm:ss.mmm>` timestamps) into Lyricsfile YAML and publishes them to a
-LRCLIB instance — entirely from the command line, **with no GUI and no dependency
-on the LRCGET desktop application**.
+LRCLIB instance.
 
 Everything here runs on stock `python3` (standard library only) and optionally
 `ffprobe`. No `curl`, `jq`, or third-party Python packages are required.
@@ -95,8 +94,7 @@ The `LRCLIB_INSTANCE` environment variable overrides the target instance
 
 ## Lyricsfile format
 
-The generated YAML follows the Lyricsfile 1.0 draft
-(`lyricsfile/SPECIFICATION.md` in the main LRCGET repository). Key points:
+The generated YAML follows the [Lyricsfile](https://github.com/tranxuanthang/lyricsfile) 1.0 draft. Key points:
 
 - `version: '1.0'`
 - `metadata`: `title`, `artist`, optional `album`/`duration_ms`/`language`/`instrumental`
